@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# log name uses mm/dd/yy format
+logName=$(date +"%m-%d-%y").log
+
+# if today's occupancy log doesn't exist, create it
+[ ! -f ./occupancylogs/"$logName" ] && $(touch ./occupancylogs/"$logName")
+
+
+
+

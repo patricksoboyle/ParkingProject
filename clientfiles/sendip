@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# ip of server you are sending your information to
+server_ip=161.6.4.165
+
+# write ip info to file
+hostname -I > ip.txt
+
+# connection established over port 55555
+# send ip information
+nc -q 3 "$server_ip" 55555 < ip.txt

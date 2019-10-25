@@ -1,0 +1,17 @@
+------------------------------------------------------------
+Client connecting to 161.6.4.165, TCP port 5001
+TCP window size: 43.8 KByte (default)
+------------------------------------------------------------
+[  3] local 172.30.192.217 port 50508 connected with 161.6.4.165 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec  45.9 MBytes  38.5 Mbits/sec
+[  3] 10.0-20.0 sec  44.6 MBytes  37.4 Mbits/sec
+[  3] 20.0-30.0 sec  45.1 MBytes  37.9 Mbits/sec
+[  3] 30.0-40.0 sec  47.4 MBytes  39.7 Mbits/sec
+[  3] 40.0-50.0 sec  47.0 MBytes  39.4 Mbits/sec
+[  3] 50.0-60.0 sec  44.6 MBytes  37.4 Mbits/sec
+[  3] 60.0-70.0 sec  44.4 MBytes  37.2 Mbits/sec
+[  3] 70.0-80.0 sec  44.1 MBytes  37.0 Mbits/sec
+[  3] 80.0-90.0 sec  44.8 MBytes  37.5 Mbits/sec
+[  3] 90.0-100.0 sec  45.0 MBytes  37.7 Mbits/sec
+[  3]  0.0-100.0 sec   453 MBytes  38.0 Mbits/sec

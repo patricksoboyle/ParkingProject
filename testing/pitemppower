@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# run during counting application to collect temp and watt 
+# usage data
+
+# NOTE: make sure watt meter is hooked up to pi
+
+# interval between measurements
+delay=595
+# using wattsup takes ~5 seconds
+
+# get pi ip
+read -p "Pi IP Address: " pi_ip
+
+while true; do
+  # get timestamp
+  timestamp=$(date +"%R")
+
+  # get watt usage
+  watts=$(~/wattsup/wattsup -c 1 ttyUSB0 watts)
+
+  # get pi temp
+  temp=$(ssh pi@"$pi_ip" vcgencmd measure_temp)
+  # trim output
+  temp=${temp##*=}
+
+  # store in log
+  echo $timestamp $watts $temp >> pitemppower.log
+  sleep $delay
+done

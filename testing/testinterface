@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# Make sure wattsup meter pro is being used
+
+# Usage: ./testinterface [1-4]
+# 1-cpu test
+# 2-memory test
+# 3-file i/o test
+# 4-network test
+
+# Can use multiple numbers (ex: 134) to run multiple tests 
+
+# server or client test
+read -p "Test workstation or pi? (w/p): " wp
+
+# get raspi ip address
+if [[ $wp == "p" ]]; then
+  # input the pi's ip address
+  read -p "Pi IP Address: " pi_ip
+fi
+
+# store workstation ip
+server_ip="$(hostname -I)"
+
+# testing variables
+
+  # cpu test
+  # how many primes to verify
+  primes=15000
+  # num of threads on workstation and pi
+  wthr=4
+  pthr=4
+
+  # network test
+  # time to run test for (seconds)
+  time4=100
+  # interval between transfers
+  delay4=10
+
+
+# cpu test
+if [[ "$1" == *"1"* ]]; then
+  
+  # run cpu test for the num of threads
+  if [[ $wp == "w" ]]; then
+    # workstation
+    echo "CPU TEST STARTING (W)"
+    for (( i=0; i<10; i++)) do
+      for (( t=1; t<=$wthr; t++ )) do
+        sysbench cpu --cpu-max-prime=$primes --num-threads=$t run \
+          >> cpulogs/servcpu$i.log
+        sleep 60
+      done
+    done
+  else
+    # pi
+    echo "CPU TEST STARTING (Pi)"
+    for (( i=0; i<10; i++)) do
+      for (( t=1; t<=$pthr; t++ )) do
+         ssh pi@"$pi_ip" sysbench cpu --cpu-max-prime=$primes \
+          --num-threads=$t run >> cpulogs/picpu$i.log
+        sleep 60
+      done
+    done
+  fi
+fi
+
+# memory test
+if [[ "$1" == *"2"* ]]; then
+
+  if [[ $wp == "w" ]]; then
+    # workstation
+    echo "MEM TEST STARTING (W)"
+    for (( i=0; i<10; i++ )) do
+      # write
+      sysbench memory --memory-total-size=2G \
+        run >> memlogs/servmem$i.log
+      # read
+      sysbench memory --memory-total-size=2G \
+        --memory-oper=read run >> memlogs/servmem$i.log
+      sleep 60
+    done
+  else
+    # pi
+    echo "MEM TEST STARTING (Pi)"
+    for (( i=0; i<10; i++)) do
+      # write
+      ssh pi@"$pi_ip" sysbench memory --memory-total-size=2G \
+        run >> memlogs/pimem$i.log
+      # read
+      ssh pi@"$pi_ip" sysbench memory --memory-total-size=2G \
+        --memory-oper=read run >> memlogs/pimem$i.log
+      sleep 60
+    done
+  fi
+
+fi
+
+# file i/o test
+if [[ "$1" == *"3"* ]]; then
+  if [[ $wp == "w" ]]; then
+    # workstation
+    echo "FILEI/O TEST STARTING (W)"
+    # run fileiotest script
+    ./fileiotest
+  fi
+  # file i/o not done on pi, memory is large enough
+  # pi doesn't do any file i/o, just sending frames
+fi
+
+# iperf (network) test
+if [[ "$1" == *"4"* ]]; then
+  echo "NETWORK TEST STARTING"
+
+  # kill iperf process if it's running
+  # errors happen if iperf daemon is already running
+  pkill iperf
+
+  # start iperf on server
+  iperf -sD -i "$delay4"
+
+  # run iperf cilent command on pi
+  # send result log to netlog
+  ssh pi@"$pi_ip" iperf -c "$server_ip" -t "$time4" -i "$delay4" \
+    > iperftest.log
+  # the resulting log will have the total transfer at the end
+fi

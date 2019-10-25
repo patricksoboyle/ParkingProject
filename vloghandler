@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# video name uses mm/dd/yy format
+videoName=$(date +"%m-%d-%y")
+
+# tmpvid.avi is the newly recorded footage
+
+# if today's video log already exists, create tmp file instead
+# else, make it
+if [ -f ./videologs/"$videoName.avi" ]; then
+  cat ./videologs/"tmpvid.avi" > $(mktemp ./videologs/tmpvidXXX.avi)
+  rm ./videologs/"tmpvid.avi"
+else
+  mv ./videologs/"tmpvid.avi" ./videologs/"$videoName.avi"
+fi
+
+
+
+
